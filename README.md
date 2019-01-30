@@ -6,6 +6,26 @@ Wanting to know more about you're community? This might be the script you are lo
 
 ## Setup
 
+### Game Server
+- Move mapstas.smx into addons/sourcemod/plugins
+- Edit addons/sourcemod/configs/databases.cfg
+```
+"mapstas"
+ {
+    "driver"            "mysql"
+    "host"                "ip"
+    "database"            "db"
+    "user"                "user"
+    "pass"                "pass"
+    //"timeout"            "0"
+    "port"            "3306"
+}
+```
+
+### Web Server
+- Upload files inside of the web server folder into your web server.
+- Edit config.php, enter your database details and maps.
+
 ## Preview 
 
 ## Demo
