@@ -10,7 +10,7 @@ Wanting to know more about you're community? This might be the script you are lo
 - Move mapstas.smx into addons/sourcemod/plugins
 - Edit addons/sourcemod/configs/databases.cfg
 ```
-"mapstas"
+"mapstats"
  {
     "driver"            "mysql"
     "host"                "ip"
