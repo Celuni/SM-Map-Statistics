@@ -27,4 +27,4 @@ Wanting to know more about you're community? This might be the script you are lo
 - Edit config.php, enter your database details and maps.
 
 ## Preview 
-![preview](https://i.imgur.com/9ujKNYO.png)
+![preview](https://i.imgur.com/xjUnDDD.png)
