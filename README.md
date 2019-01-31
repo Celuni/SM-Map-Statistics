@@ -27,5 +27,7 @@ Wanting to know more about you're community? This might be the script you are lo
 - Edit config.php, enter your database details and maps.
 
 ## Preview 
+### Get a good idea of your general map stats.
 ![preview](https://i.imgur.com/Ebl7sRN.png)
+### Simply click to view the scoreboard.
 ![preview](https://i.imgur.com/hHWZlsx.png)
