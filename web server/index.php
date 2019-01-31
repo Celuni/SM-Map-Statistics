@@ -22,7 +22,7 @@ if ($conn->connect_error) {
         <div class="container">
             <div class="row" style="margin-top:25px;">
                 <div class="col-md-12">
-                    <h1 style="margin-bottom:15px;">General Satistics</h1>
+                    <h1 style="margin-bottom:15px;">General Statistics</h1>
                 </div>
                             <?php
                             $sql = "SELECT * FROM map_stats_total ORDER BY map_count DESC";
@@ -50,11 +50,11 @@ if ($conn->connect_error) {
                                     </tr>';
                                 }
                                 echo '</tbody>
-                                    </table>
-                                </div>
-                            </div>';
+                                        </table>
+                                    </div>
+                                </div>';
                             } else {
-                                echo '<h3 class="text-center" style="margin-top:15px;">No Satistics Saved Yet.</h3>';
+                                echo '<h3 class="text-center" style="margin-top:15px;">No Statistics Saved Yet.</h3>';
                             }
                             ?>
             </div>
