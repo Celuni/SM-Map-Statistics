@@ -25,7 +25,7 @@ public void OnPluginStart()
 public void OnMapStart()
 {
 	HookEvent("round_start", Event_RoundStart);
-	HookEvent("cs_win_panel_match", Event_MatchEnd);
+	HookEvent("round_end", Event_RoundEnd);
 
 	CreateTimer(1.0, InsertMapQuery);
 }
@@ -147,7 +147,12 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 	UnhookEvent("round_start", Event_RoundStart);
 }
 
-public void Event_MatchEnd(Event event, const char[] name, bool dontBroadcast)
+public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
+{
+	UpdatePlayerStats();
+}
+
+public void UpdatePlayerStats()
 {
 	char sQuery[1024], sName[64], sSteamID[64];
 	int iEnt, iKills, iDeaths, iMVPs;
@@ -155,7 +160,7 @@ public void Event_MatchEnd(Event event, const char[] name, bool dontBroadcast)
 	iEnt = FindEntityByClassname(-1, "cs_player_manager");
 	for(int i = 1; i <= MaxClients; i++)
 	{
-		if(!IsValidClient(i) && !IsClientObserver(i)) continue;
+		if(!IsValidClient(i) && IsClientObserver(i)) continue;
 
 		iKills = GetEntProp(iEnt, Prop_Send, "m_iKills", _, i);
 		iDeaths = GetEntProp(iEnt, Prop_Send, "m_iDeaths", _, i);
@@ -167,8 +172,9 @@ public void Event_MatchEnd(Event event, const char[] name, bool dontBroadcast)
 		GetClientAuthId(i, AuthId_SteamID64, sSteamID, sizeof(sSteamID));
 
 		int len = 0;
-		len += Format(sQuery[len], sizeof(sQuery) - len, "INSERT IGNORE INTO map_stats_players (match_id, name, steamid64, kills, deaths, mvps) ");
-		len += Format(sQuery[len], sizeof(sQuery) - len, "VALUES (LAST_INSERT_ID(), '%s', '%s', %i, %i, %i);", sName, sSteamID, iKills, iDeaths, iMVPs);
+		len += Format(sQuery[len], sizeof(sQuery) - len, "INSERT INTO map_stats_players (match_id, name, steamid64, kills, deaths, mvps) ");
+		len += Format(sQuery[len], sizeof(sQuery) - len, "VALUES (LAST_INSERT_ID(), '%s', '%s', %i, %i, %i) ", sName, sSteamID, iKills, iDeaths, iMVPs);
+		len += Format(sQuery[len], sizeof(sQuery) - len, "ON DUPLICATE KEY UPDATE name='%s', kills=%i, deaths=%i, mvps=%i;", sName, iKills, iDeaths, iMVPs);
 		g_Database.Query(SQL_GenericQuery, sQuery);
 	}
 }
