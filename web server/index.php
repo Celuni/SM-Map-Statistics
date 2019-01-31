@@ -68,7 +68,7 @@ if($result->num_rows > 0) {
         $map_img = array_search($row["map"], $maps);
         $match_id = $row['match_id'];
         if ($row["players_end"] == null) {
-            $players_end = "On Going";
+            $players_end = "Not Saved";
         } else {
             $players_end = $row["players_end"];
         }
