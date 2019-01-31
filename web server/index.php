@@ -119,7 +119,7 @@ if ($result->num_rows > 0) {
                         $kdr_roundup = $row["kills"];
                     }
                     echo '<tr>
-                        <td><a href="https://steamcommunity/profiles/'.$row["steamid64"].'">'.$row["name"].'<br></a></td>
+                        <td><a href="https://steamcommunity.com/profiles/'.$row["steamid64"].'">'.$row["name"].'<br></a></td>
                         <td>'.$row["kills"].'</td>
                         <td>'.$row["deaths"].'</td>
                         <td>'.$row["mvps"].'</td>
