@@ -6,6 +6,7 @@
 #pragma newdecls required
 
 Database g_Database = null;
+float g_fDelay = 0.0;
 
 public Plugin myinfo = 
 {
@@ -18,7 +19,7 @@ public Plugin myinfo =
 
 public void OnPluginStart()
 {
-	CreateTimer(0.1, AttemptMySQLConnection);
+	CreateTimer(1.0, AttemptMySQLConnection);
 }
 
 public void OnMapStart()
@@ -26,14 +27,26 @@ public void OnMapStart()
 	HookEvent("round_start", Event_RoundStart);
 	HookEvent("cs_win_panel_match", Event_MatchEnd);
 
-	int iCount;
-	for(int i = 1; i <= MaxClients; i++)
-		if(IsValidClient(i)) iCount++;
+	CreateTimer(1.0, InsertMapQuery);
+}
+
+public Action InsertMapQuery(Handle timer)
+{
+	if(g_Database == null)
+	{
+		CreateTimer(1.0, InsertMapQuery);
+		return Plugin_Handled;
+	}
 
 	char sQuery[1024], sMap[64];
 	GetCurrentMap(sMap, sizeof(sMap));
+	int iCount = 0;
+	for(int i = 1; i <= MaxClients; i++)
+		if(IsValidClient(i)) iCount++;
+
 	Format(sQuery, sizeof(sQuery), "INSERT INTO map_stats_total (map_name, total_players, map_count) VALUES ('%s', %i, 1) ON DUPLICATE KEY UPDATE total_players=total_players+%i, map_count=map_count+1;", sMap, iCount, iCount);
 	g_Database.Query(SQL_GenericQuery, sQuery);
+	return Plugin_Handled;
 }
 
 public void OnClientPostAdminCheck(int Client)
@@ -63,6 +76,8 @@ public Action AttemptMySQLConnection(Handle timer)
 	}
 	else
 		LogError("Database Error: No Database Config Found! (%s/addons/sourcemod/configs/databases.cfg)", sFolder);
+
+	return Plugin_Handled;
 }
 
 public void SQL_InitialConnection(Database db, const char[] sError, int data)
@@ -117,14 +132,14 @@ public void CreateAndVerifySQLTables()
 
 public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 {
+	if(GetGameTime() - g_fDelay <= 1.0 || GameRules_GetProp("m_bWarmupPeriod") == 1) return; //fix for round_start being called twice consecutively for some reason
+	g_fDelay = GetGameTime();
+
 	char sQuery[1024], sMap[64];
 	GetCurrentMap(sMap, sizeof(sMap));
-	int iCount;
+	int iCount = 0;
 	for(int i = 1; i <= MaxClients; i++)
-	{
-		if(IsValidClient(i) && (GetClientTeam(i) == CS_TEAM_T || GetClientTeam(i) == CS_TEAM_CT))
-			iCount++;
-	}
+		if(IsValidClient(i) && (GetClientTeam(i) == CS_TEAM_T || GetClientTeam(i) == CS_TEAM_CT)) iCount++;
 
 	Format(sQuery, sizeof(sQuery), "INSERT INTO map_stats (players_start, map) VALUES (%i, '%s');", iCount, sMap);
 	g_Database.Query(SQL_GenericQuery, sQuery);
@@ -135,15 +150,7 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 public void Event_MatchEnd(Event event, const char[] name, bool dontBroadcast)
 {
 	char sQuery[1024], sName[64], sSteamID[64];
-	int iEnt, iKills, iDeaths, iMVPs, iCount;
-	for(int i = 1; i <= MaxClients; i++)
-	{
-		if(IsValidClient(i) && (GetClientTeam(i) == CS_TEAM_T || GetClientTeam(i) == CS_TEAM_CT))
-			iCount++;
-	}
-
-	Format(sQuery, sizeof(sQuery), "UPDATE map_stats SET players_end=%i WHERE match_id=LAST_INSERT_ID();", iCount);
-	g_Database.Query(SQL_GenericQuery, sQuery);
+	int iEnt, iKills, iDeaths, iMVPs;
 
 	iEnt = FindEntityByClassname(-1, "cs_player_manager");
 	for(int i = 1; i <= MaxClients; i++)
@@ -164,6 +171,19 @@ public void Event_MatchEnd(Event event, const char[] name, bool dontBroadcast)
 		len += Format(sQuery[len], sizeof(sQuery) - len, "VALUES (LAST_INSERT_ID(), '%s', '%s', %i, %i, %i);", sName, sSteamID, iKills, iDeaths, iMVPs);
 		g_Database.Query(SQL_GenericQuery, sQuery);
 	}
+}
+
+public void OnMapEnd()
+{
+	if(g_Database == null) return;
+
+	char sQuery[1024];
+	int iCount = 0;
+	for(int i = 1; i <= MaxClients; i++)
+		if(IsValidClient(i) && (GetClientTeam(i) == CS_TEAM_T || GetClientTeam(i) == CS_TEAM_CT)) iCount++;
+
+	Format(sQuery, sizeof(sQuery), "UPDATE map_stats SET players_end=%i WHERE match_id=LAST_INSERT_ID();", iCount);
+	g_Database.Query(SQL_GenericQuery, sQuery);
 }
 
 //generic query handler
