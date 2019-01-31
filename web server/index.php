@@ -28,7 +28,7 @@ if ($conn->connect_error) {
                             $sql = "SELECT * FROM map_stats_total ORDER BY map_count DESC";
                             $result = $conn->query($sql);
 
-                            if($result->num_rows > 0) { 
+                            if ($result->num_rows > 0) { 
                                 echo '<div class="col-md-12">
                                 <div class="table-responsive">
                                     <table class="table">
@@ -41,7 +41,7 @@ if ($conn->connect_error) {
                                             </tr>
                                         </thead>
                                         <tbody>';
-                                while($row = $result->fetch_assoc()) {
+                                while ($row = $result->fetch_assoc()) {
                                     echo '<tr>
                                     <td>'.$row["map_name"].'</td>
                                     <td>'.$row["map_count"].'</td>
@@ -62,9 +62,9 @@ if ($conn->connect_error) {
 $sql = "SELECT * FROM map_stats ORDER BY match_id DESC LIMIT 15";
 $result = $conn->query($sql);
 
-if($result->num_rows > 0) {
+if ($result->num_rows > 0) {
     echo '<h1 style="margin-top:15px;">Latest Matches</h1>';
-    while($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch_assoc()) {
         $map_img = array_search($row["map"], $maps);
         $match_id = $row['match_id'];
         if ($row["players_end"] == null) {
@@ -99,7 +99,7 @@ if($result->num_rows > 0) {
             $sql_score = "SELECT * FROM map_stats_players WHERE match_id = '$match_id' ORDER BY kills DESC";
             $result_score = $conn->query($sql_score);
             
-            if($result_score->num_rows > 0) {
+            if ($result_score->num_rows > 0) {
                 echo '<table class="table">
                 <thead>
                     <tr>
@@ -111,8 +111,8 @@ if($result->num_rows > 0) {
                     </tr>
                 </thead>
                 <tbody>';
-                while($row = $result_score->fetch_assoc()) {
-                    if($row["kills"] > 0 && $row["deaths"] > 0){
+                while ($row = $result_score->fetch_assoc()) {
+                    if ($row["kills"] > 0 && $row["deaths"] > 0){
                         $kdr = ($row["kills"] / $row["deaths"]); 
                         $kdr_roundup = round($kdr, 2);
                     } else {
@@ -128,12 +128,13 @@ if($result->num_rows > 0) {
                 }
                 echo '</tbody>
                 </table>';
+            } else {
+                echo '<h3 class="text-center" style="margin-top:15px;">No Player Satistics Recorded.</h3>';
             }
-        echo '<h3 class="text-center" style="margin-top:15px;">No Player Satistics Recorded.</h3>
-        </div>
-        </div>
-        </div>
-        </div>';
+        echo '</div>
+            </div>
+           </div>
+       </div>';
     }
 }
 
