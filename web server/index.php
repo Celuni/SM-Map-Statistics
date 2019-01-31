@@ -75,7 +75,7 @@ if($result->num_rows > 0) {
         echo '<div data-bs-hover-animate="pulse" style="margin-top:15px;cursor: pointer;" data-toggle="collapse" data-target="#matchid_'.$match_id.'" aria-expanded="false" aria-controls="matchid_'.$match_id.'">
         <div class="row" style="color:rgb(255,255,255);">
             <div class="col-md-12">
-                <div class="card" style="border: none;"><img class="card-img w-100 d-block" style="background-color:#3e3e3f;background-image:url(&apos;'.$map_img.'&apos;);height:160px;-webkit-filter:blur(4px);filter:blur(4px);">
+                <div class="card" style="border: none;"><img class="card-img w-100 d-block" sstyle="background-color:#3e3e3f;background-position:center center;background-size: 100% auto;background-image:url(&apos;'.$map_img.'&apos;);height:160px;-webkit-filter:blur(4px);filter:blur(4px);">
                     <div class="card-img-overlay">
                         <div class="row">
                             <div class="col-md-6 text-left">
