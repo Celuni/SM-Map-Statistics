@@ -7,6 +7,7 @@
 
 Database g_Database = null;
 float g_fDelay = 0.0;
+int g_iPlayerCount = 0;
 
 public Plugin myinfo = 
 {
@@ -150,6 +151,10 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 {
 	UpdatePlayerStats();
+	int iCount = 0;
+	for(int i = 1; i <= MaxClients; i++)
+		if(IsValidClient(i) && (GetClientTeam(i) == CS_TEAM_T || GetClientTeam(i) == CS_TEAM_CT)) iCount++;
+	g_iPlayerCount = iCount;
 }
 
 public void UpdatePlayerStats()
@@ -184,11 +189,7 @@ public void OnMapEnd()
 	if(g_Database == null) return;
 
 	char sQuery[1024];
-	int iCount = 0;
-	for(int i = 1; i <= MaxClients; i++)
-		if(IsValidClient(i) && (GetClientTeam(i) == CS_TEAM_T || GetClientTeam(i) == CS_TEAM_CT)) iCount++;
-
-	Format(sQuery, sizeof(sQuery), "UPDATE map_stats SET players_end=%i WHERE match_id=LAST_INSERT_ID();", iCount);
+	Format(sQuery, sizeof(sQuery), "UPDATE map_stats SET players_end=%i WHERE match_id=LAST_INSERT_ID();", g_iPlayerCount);
 	g_Database.Query(SQL_GenericQuery, sQuery);
 }
 
