@@ -165,7 +165,7 @@ public void UpdatePlayerStats()
 	iEnt = FindEntityByClassname(-1, "cs_player_manager");
 	for(int i = 1; i <= MaxClients; i++)
 	{
-		if(!IsValidClient(i) && IsClientObserver(i)) continue;
+		if(!IsValidClient(i) || IsClientObserver(i)) continue;
 
 		iKills = GetEntProp(iEnt, Prop_Send, "m_iKills", _, i);
 		iDeaths = GetEntProp(iEnt, Prop_Send, "m_iDeaths", _, i);
