@@ -177,7 +177,7 @@ public void UpdatePlayerStats()
 		GetClientAuthId(i, AuthId_SteamID64, sSteamID, sizeof(sSteamID));
 
 		int len = 0;
-		len += Format(sQuery[len], sizeof(sQuery) - len, "INSERT INTO map_stats_players (match_id, name, steamid64, kills, deaths, mvps) ");
+		len += Format(sQuery[len], sizeof(sQuery) - len, "INSERT IGNORE INTO map_stats_players (match_id, name, steamid64, kills, deaths, mvps) ");
 		len += Format(sQuery[len], sizeof(sQuery) - len, "VALUES (LAST_INSERT_ID(), '%s', '%s', %i, %i, %i) ", sName, sSteamID, iKills, iDeaths, iMVPs);
 		len += Format(sQuery[len], sizeof(sQuery) - len, "ON DUPLICATE KEY UPDATE name='%s', kills=%i, deaths=%i, mvps=%i;", sName, iKills, iDeaths, iMVPs);
 		g_Database.Query(SQL_GenericQuery, sQuery);
